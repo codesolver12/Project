@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    
+
+    <title> AIRCRAFT HEALTH MONITORING AND PREDICTIVE MAINTAINANCE WITH AUTOMATED TRAFFIC CONTROL GUI</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0/dist/chartjs-plugin-streaming.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pagestyles.css') }}">
+
+    <style>
+        #map {height: 180px}
+    </style>
+</head>
+<body>
+    <div class="window">
+
+
+            <div class="SIDEBAR">
+                        <div class="DATA-ACQ">
+                            <div class="DATA-ACQ-TEXT">DATA ACQUISITION</div>
+                            <!-- DATA-ACQ-TEXT -->
+                        </div>
+                        <!-- dataacq -->
+
+                        <button class="PLAYBACK" onclick="window.location.href = 'playback';">
+                            <div class="PLAYBACK-TEXT">PLAYBACK</div>
+                        </button>
+                        <!-- playback -->
+
+            </div>  
+            <!-- //SIDEBAR -->
+
+        
+        
+        
+        
+            <div class="MAIN">
+
+                        <div class="TOPROW">
+                                <div class="PAPLOT">
+                                    <canvas id="myChart"></canvas>
+                                </div>
+
+                                <script>
+                                    const data = {
+                                        datasets: [{
+                                            label: ' FLIGHT  ALTITUDE',
+                                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                            borderColor: 'rgba(75, 192, 192, 1)',
+                                            borderWidth: 1,
+                                            fill: true,
+                                            tension: 0.2,
+                                            data: []  // Initialize with an empty array
+                                        }]
+                                    };
+            
+                                    const config = {
+                                        type: 'line',
+                                        data,
+                                        options: {
+                                            maintainAspectRatio: false,
+                                            scales: {
+                                                x: {
+                                                    type: 'realtime',
+                                                },
+                                                y: {
+                                                    beginAtZero: true
+                                                }
+                                            }
+                                        }
+                                    };
+            
+                                    const ctx = document.getElementById('myChart').getContext('2d');
+                                    const myChart = new Chart(ctx, config);
+            
+                                    function updateChartData() {
+                                        $.get('/random_number', function (data) {         // Data comes in from the python program here
+                                            const randomNumber = data.random_number;
+                                            $('#ALTITUDE').text("ALTITUDE: " + randomNumber);
+
+                                            myChart.data.datasets[0].data.push({
+                                                x: Date.now(),
+                                                y: randomNumber
+                                            });
+                                            myChart.update();
+                                        });
+                                    }
+            
+                                    // Update chart every second
+                                    setInterval(updateChartData, 1000);
+                                </script>
+
+
+                                <!-- PAPLOT -->
+                                <div class="ZONE">
+
+                                    <div class="ZONE-COLOUR">
+                                        <div class="ZONE-COLOUR-LIST">
+
+                                        </div>
+                                        <div class="ZONE-COLOUR-LIST">
+
+                                        </div>
+                                        <div class="ZONE-COLOUR-LIST">
+
+                                        </div>
+                                        <div class="ZONE-COLOUR-LIST">
+
+                                        </div>
+
+
+                                    </div>
+                                    <!-- ZONE-COLOUR -->
+                                    <div class="ZONE-NAME">
+                                        <div class="ZONE-NAME-LIST">
+                                            <p class="pzone"> ON GROUND </p>
+
+                                        </div>
+                                        <div class="ZONE-NAME-LIST">
+                                            <p class="pzone"> AIRBORNE </p>
+
+                                        </div>
+                                        <div class="ZONE-NAME-LIST">
+                                            <p class="pzone"> AT MAINTAINCE </p>
+
+                                        </div>
+                                        <div class="ZONE-NAME-LIST">
+                                            <p class="pzone"> AT PARKING WAITING FOR FLIGHT PLAN </p>
+
+                                        </div>
+
+                                    </div>
+                                    <!-- ZONE-NAME -->
+                                    <div class="ZONE-COORD">
+                                        <div class="ZONE-COORD-LIST">
+
+                                        </div>
+                                        <div class="ZONE-COORD-LIST">
+
+                                        </div>
+                                        <div class="ZONE-COORD-LIST">
+
+                                        </div>
+                                        <div class="ZONE-COORD-LIST">
+
+                                        </div>
+
+                                    </div>
+                                    <!-- ZONE-COORD -->
+                                </div>
+                                <!-- ZONE -->
+                                <div class="WAYPOINT">
+
+                                </div>
+                                <!-- WAYPOINT -->
+
+                        </div>
+                        <!-- TOPROW -->
+
+                        <div class="BOTROW">
+                                <div class="FPV">
+
+                                    <video height=100% autoplay muted loop>
+                                        <source src={{ url_for('static', filename="static video.mp4") }} type="video/mp4">
+                                      </video>
+
+                                </div>
+                                <!-- FPV -->
+                                <div class="DATA-BOX">
+                                    <div class="WAY_MAP">
+                                                
+                                                <div id = "map"></div>
+                                                    <script>
+                                                        const map = L.map('map'); 
+                                                        // Initializes map
+
+                                                        map.setView([51.505, -0.09], 13); 
+                                                        // Sets initial coordinates and zoom level
+
+                                                        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                                            maxZoom: 19,
+                                                            attribution: '© OpenStreetMap'
+                                                        }).addTo(map); 
+                                                        // Sets map data source and associates with map
+
+                                                        let marker, circle, zoomed;
+
+                                                        navigator.geolocation.watchPosition(success, error);
+
+                                                        function success(pos) {
+
+                                                            const lat = pos.coords.latitude;
+                                                            const lng = pos.coords.longitude;
+                                                            const accuracy = pos.coords.accuracy;
+
+                                                            if (marker) {
+                                                                map.removeLayer(marker);
+                                                                map.removeLayer(circle);
+                                                            }
+                                                            // Removes any existing marker and circule (new ones about to be set)
+
+                                                            marker = L.marker([lat, lng]).addTo(map);
+                                                            circle = L.circle([lat, lng], { radius: accuracy }).addTo(map);
+                                                            // Adds marker to the map and a circle for accuracy
+
+                                                            if (!zoomed) {
+                                                                zoomed = map.fitBounds(circle.getBounds()); 
+                                                            }
+                                                            // Set zoom to boundaries of accuracy circle
+
+                                                            map.setView([lat, lng]);
+                                                            // Set map focus to current user position
+
+                                                        }
+
+                                                        function error(err) {
+
+                                                            if (err.code === 1) {
+                                                                alert("Please allow geolocation access");
+                                                            } else {
+                                                                alert("Cannot get current location");
+                                                            }
+
+                                                        }
+                                                    </script>
+                                    </div>
+                                    <!-- MAP -->
+                                    <div class="DATA_SECT">
+                                        <div class = "DATA_TEXT_FONT">
+                                            <p id="ALTITUDE">WAITING</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- DATA-BOX -->
+
+                        </div>
+                        <!-- BOTROW -->
+
+            </div> 
+            <!-- //main -->
+
+    </div> 
+    <!-- //window -->
+</body>
+</html>

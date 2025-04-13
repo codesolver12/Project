@@ -1,0 +1,41 @@
+import time
+import serial
+
+def get_calibration_factor():
+    print("Automatic Calibration in Progress...")
+
+    ser = serial.Serial('COM8', 9600)  # Replace 'COMX' with your Arduino COM port
+    time.sleep(2)  # Wait for the Arduino to initialize
+
+    print("Place a known weight on the scale and press Enter.")
+    input()
+
+    ser.write(b'get_calibration_factor\n')
+    calibration_factor = float(ser.readline().decode().strip())
+
+    print("Calibration Factor:", calibration_factor)
+    print("Calibration Completed.")
+    ser.close()
+
+    return calibration_factor
+
+def main():
+    calibration_factor = get_calibration_factor()
+
+    ser = serial.Serial('COMX', 9600)  # Replace 'COMX' with your Arduino COM port
+    time.sleep(2)  # Wait for the Arduino to initialize
+
+    print("Weight Reading:")
+    try:
+        while True:
+            ser.write(b'get_weight\n')
+            weight = float(ser.readline().decode().strip())
+            print(weight, "g")
+            time.sleep(0.5)
+
+    except KeyboardInterrupt:
+        print("Measurement stopped by the user.")
+        ser.close()
+
+if __name__ == "__main__":
+    main()

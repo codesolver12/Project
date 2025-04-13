@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USB Camera Demo</title>
+</head>
+<body>
+    <h1>USB Camera Demo</h1>
+    <video id="videoElement" width="640" height="480" autoplay></video>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+    const video = document.getElementById('videoElement');
+
+    navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+            console.log('Available devices:', devices);
+
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+            if (videoDevices.length > 0) {
+                const deviceId = videoDevices[0].deviceId;
+                console.log('Selected device:', videoDevices[0]);
+
+                const constraints = {
+                    video: { deviceId: { exact: deviceId } }
+                };
+
+                navigator.mediaDevices.getUserMedia(constraints)
+                    .then(stream => {
+                        video.srcObject = stream;
+                    })
+                    .catch(error => {
+                        console.error('Error accessing USB camera:', error);
+                    });
+            } else {
+                console.error('No video devices found.');
+            }
+        })
+        .catch(error => {
+            console.error('Error enumerating devices:', error);
+        });
+});
+
+    </script>
+</body>
+</html>
