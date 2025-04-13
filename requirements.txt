@@ -56,3 +56,12 @@ tensorflow==2.16.1
 matplotlib==3.8.2
 seaborn==0.13.0
 psycopg2-binary==2.9.9
+# requirements.txt
+Flask==3.0.2
+numpy==1.26.3
+pandas==2.1.4
+scikit-learn==1.4.0  # Updated for Python 3.12
+tensorflow==2.16.1   # Compatible with Python 3.12
+opencv-python==4.9.0.80
+pyserial==3.5
+python-dotenv==1.0.0
