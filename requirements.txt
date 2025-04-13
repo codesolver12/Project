@@ -65,3 +65,9 @@ tensorflow==2.16.1   # Compatible with Python 3.12
 opencv-python==4.9.0.80
 pyserial==3.5
 python-dotenv==1.0.0
+# requirements.txt
+Flask==3.0.2
+numpy==1.26.3
+opencv-python==4.9.0.80
+pyserial==3.5
+python-dotenv==1.0.0
