@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+
+    <title> AIRCRAFT HEALTH MONITORING AND PREDICTIVE MAINTAINANCE WITH AUTOMATED TRAFFIC CONTROL GUI</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0/dist/chartjs-plugin-streaming.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" integrity="sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script> -->
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='playstyles.css') }}">
+
+    
+
+  </head>
+  <body>
+    <div class="window">
+            <div class="SIDEBAR">
+                        <div class="DATA-ACQ" onclick="window.location.href = 'home';">
+                            <div class="DATA-ACQ-TEXT">DATA ACQUISITION</div>
+                            <!-- DATA-ACQ-TEXT -->
+                        </div>
+                        
+                        <!-- dataacq -->
+                        <div class="PLAYBACK">
+                            <div class="PLAYBACK-TEXT">PLAYBACK</div>
+                        </div>
+                        <!-- playback -->
+            </div>  
+            <!-- //SIDEBAR -->
+
+            <div class="MAIN">
+
+                  <div class = container>
+                    <div class="containerbox">
+                      <canvas id = "myChart" ></canvas>
+                    </div>
+                    <!-- containerbox ===== canvas div for the graph -->
+                  </div>
+                  <!-- container ===== box for canvas -->
+            
+                  <div class="BOTROW"> 
+
+                    <div class = "PLAY_BUTTON">
+
+                      <div id = liveplay class = PLAY onclick="window.location.href = 'playback_static';">
+                        <!-- <div class = PLAY> -->
+                          <div class = PLAY_BUTTON_TITLE>PLAY</div>
+                          <div class = PLAY_BUTTON_DESC>LIVE DATA</div>
+                        <!-- </div> -->
+                          </div>
+                      <div id = livepause class = PAUSE onclick="window.location.href = 'playback_static';">
+                        <!-- <div class = PAUSE> -->
+                          <div class = PLAY_BUTTON_TITLE>PAUSE</div>
+                          <div class = PLAY_BUTTON_DESC>STORED DATA</div>
+                        <!-- </div> -->
+                          </div>
+                      
+
+                    </div>
+
+
+                    <div class = "HOVER_DATA">
+                      <div id = "HOVER_TIME" class = "HOVER">
+                        <div id = HOVER_TIME_TEXT class = "HOVER_TITLE">TIME:</div>
+                        <div id = HOVER_TIME_VALUE class = "HOVER_VALUE">--:--:--</div>
+                      </div>
+                      <div id = "HOVER_ALTITUDE" class = "HOVER">
+                        <div id = HOVER_ALTITUDE_TEXT class = "HOVER_TITLE">ALTITUDE:</div>
+                        <div id = HOVER_ALTITUDE_VALUE class = "HOVER_VALUE">-- ft</div>
+                      </div>
+                      <div id = "HOVER_STATUS" class = "HOVER">
+                        <div id = HOVER_STATUS_TEXT class = "HOVER_TITLE"> STATUS :</div>
+                        <div id = HOVER_STATUS_VALUE class = "HOVER_VALUE">ARMED</div>
+                      </div>
+                      <div id = "STATUS_IMG" class = "HOVER_IMAGE">
+                        <img id="PADA_STATUS_IMAGE" src="{{ url_for('serve_static', filename='PADA_BUTTON_ARMED.png') }}"; alt="PADA" style="width: 100%; height: 100%;" onclick="deployPADA()">
+                      </div>
+                    </div>
+
+                    <div class="RELEASE_DATA">
+
+                      <div class = "RELEASE_TIME">
+                        <div id = RELEASE_TIME_TEXT class = "HOVER_TITLE"> DEPLOYED TIME:</div>
+                        <div id = RELEASE_TIME_VALUE class = "RELEASE_VALUE">--:--:--</div>
+                      </div>
+                      
+                      <div class = "RELEASE_ALTITUDE">
+                        <div id = RELEASE_ALTITUDE_TEXT class = "HOVER_TITLE"> DEPLOY ALTITUDE:</div>
+                        <div id = RELEASE_ALTITUDE_VALUE class = "RELEASE_VALUE">-- ft</div>
+                      </div>
+                    </div>
+
+                  </div>
+
+
+
+
+
+
+            </div> 
+            <!-- //main -->
+
+    </div>
+    <!-- //window -->
+
+
+                <script>
+
+                  
+
+                  const time_key = 'time_key';
+                  const alt_key = 'alt_key';
+                  const status_key = 'status_key';
+
+                  
+
+                  let stored_release_time = localStorage.getItem('time_key');
+                  let stored_release_alt = localStorage.getItem('alt_key');
+                  let stored_release_status = localStorage.getItem('status_key');
+
+
+                  if (stored_release_time === null || stored_release_alt === null || stored_release_status === null){
+                    stored_release_time = '--:--:--';
+                    stored_release_alt = '-- ft.';
+                    stored_release_status ='ARMED';
+                    localStorage.setItem(time_key, stored_release_time);
+                    localStorage.setItem(alt_key, stored_release_alt);
+                    localStorage.setItem(status_key, stored_release_status);
+                  }
+
+                  updateReleaseData();
+                  
+                  function updateReleaseData() {
+                    document.getElementById('RELEASE_TIME_VALUE').textContent = stored_release_time;
+                    document.getElementById('RELEASE_ALTITUDE_VALUE').textContent = stored_release_alt;
+                    document.getElementById('HOVER_STATUS_VALUE').textContent = stored_release_status;
+                  }
+
+
+
+
+
+                  // localStorage.setItem('datapoints',[0,0,0,0,0,0,0,0,0])
+                  
+                  
+                   const load_chart_data_str = localStorage.getItem('datapoints');
+                   const load_chart_data = load_chart_data_str.split(',')
+                  
+
+                  // var socket = io();
+                  //     socket.on('connect', function() {
+                  //         socket.emit('my event', {data: 'I\'m connected!'});
+                  //       });
+
+                      const data = {
+                                    datasets: [{
+                                        label: ' FLIGHT ALTITUDE',
+                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 1,
+                                        fill: true,
+                                        tension: 0.2,
+                                        data: [
+                                        { x: Date.now() - 9000, y: load_chart_data [0] },
+                                        { x: Date.now() - 8000, y: load_chart_data [1] },
+                                        { x: Date.now() - 7000, y: load_chart_data [2] },
+                                        { x: Date.now() - 6000, y: load_chart_data [3] },
+                                        { x: Date.now() - 5000, y: load_chart_data [4] },
+                                        { x: Date.now() - 4000, y: load_chart_data [5] },
+                                        { x: Date.now() - 3000, y: load_chart_data [6] },
+                                        { x: Date.now() - 2000, y: load_chart_data [7] },
+                                        { x: Date.now() - 1000, y: load_chart_data [8] }
+                                      ]  // Initialize with an empty array
+                                    }]
+                                };
+        
+                                const config = {
+                                    type: 'line',
+                                    data,
+                                    options: {
+                                        layout:{
+                                          padding: {
+                                            left: 20,
+                                            right: 20,
+                                            bottom: 20
+                                          }
+                                        },
+                                        maintainAspectRatio: false,
+                                        scales: {
+                                            x: {
+                                                type: 'realtime',
+                                                ticks: {
+                                                  color: "white",
+                                                  maxRotation: 20,
+                                                  minRotation: 20
+                                                },
+                                                grid: {
+                                                  color: 'rgba(176, 176, 176, 0.7)'
+                                                },
+                                                border: {
+                                                  dash: [15, 2]
+                                                }
+                                              },
+                                            y: {
+                                                beginAtZero: true,
+                                                grid: {
+                                                  color: 'rgba(176, 176, 176, 0.7)'
+                                                },
+                                                ticks:{
+                                                  color: "white",
+                                                }
+
+                                            }
+                                        },
+                                        plugins: {
+                                            tooltip: {
+                                              enabled: true
+                                            }
+                                        }
+                                    }
+                                };
+        
+                                const ctx = document.getElementById('myChart').getContext('2d');
+                                const myChart = new Chart(ctx, config);
+        
+
+                                function deployPADA(){
+                                    localStorage.setItem('route_name','/random_number_deployed');
+                                    updateChartData(true);
+                                }
+
+
+                                function updateChartData(PADA_Click) {
+                                  route_used = localStorage.getItem('route_name')
+                                  $.get(route_used, function (data) {          // Data comes in from the python program here
+                                      const altitude_value = data.altitude;    
+                                      //const randomNumber = data.random_number;
+                                        $('#HOVER_ALTITUDE_VALUE').text(data.altitude + " ft");
+
+                                        load_chart_data.shift();
+                                        load_chart_data.push(data.altitude);
+                                        localStorage.setItem('datapoints',load_chart_data)
+                                        console.log(localStorage.getItem('datapoints'))
+
+
+                                        const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+                                        const formatter = new Intl.DateTimeFormat('en-US', options);
+                                        const now = new Date();
+                                        let formattedTime;
+
+                                        if (now.getHours() === 0) {
+                                          const adjustedHours = '00';
+                                          const minutes = now.getMinutes().toString().padStart(2, '0');
+                                          const seconds = now.getSeconds().toString().padStart(2, '0');
+                                          formattedTime = `${adjustedHours}:${minutes}:${seconds}`;
+                                        }
+                                        else {
+                                          formattedTime = formatter.format(now);
+                                        }
+
+                                        $('#HOVER_TIME_VALUE').text(formattedTime);
+
+                                        if (PADA_Click){
+
+
+                                          stored_release_time = formattedTime;
+                                          stored_release_alt = `${randomNumber} ft.`;
+                                          stored_release_status = 'DEPLOYED';
+
+                                          localStorage.setItem(time_key, stored_release_time);
+                                          localStorage.setItem(alt_key, stored_release_alt);
+                                          localStorage.setItem(status_key, stored_release_status);
+
+                                          updateReleaseData();
+
+
+                                          // console.log("pada click")
+                                          // $('#RELEASE_ALTITUDE_VALUE').text(randomNumber + " ft");
+                                          // $('#RELEASE_TIME_VALUE').text(formattedTime);
+                                          // $('#HOVER_STATUS_VALUE').text('DEPLOYED');
+                                          // // document.getElementById('PADA_STATUS_IMAGE').src = "{{ url_for('serve_static', filename='PADA_BUTTON_DEPLOYED.png') }}";
+                                          // $('PADA_STATUS_IMAGE').src = "{{ url_for('serve_static', filename='PADA_BUTTON_DEPLOYED.png') }}";
+                                          // console.log(document.getElementById('PADA_STATUS_IMAGE').src)
+
+                                        }
+
+
+
+                                        myChart.data.datasets[0].data.push({
+                                            x: Date.now(),
+                                            y: data.altitude
+                                        });
+                                        myChart.update();
+
+
+                                    });
+                                }
+                                //});
+                                setInterval(updateChartData, 1000);
+
+                </script>
+
+                  
+  </body>
+  </html>

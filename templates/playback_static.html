@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+
+    <title> AIRCRAFT HEALTH MONITORING AND PREDICTIVE MAINTAINANCE WITH AUTOMATED TRAFFIC CONTROL GUI</title>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0/dist/chartjs-plugin-streaming.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" integrity="sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='playstyles.css') }}">
+
+
+
+  </head>
+
+
+
+  <body>
+    <div class="window">
+            <div class="SIDEBAR">
+                        <div class="DATA-ACQ" onclick="window.location.href = 'home';">
+                            <div class="DATA-ACQ-TEXT">DATA ACQUISITION</div>
+                            <!-- DATA-ACQ-TEXT -->
+                        </div>
+
+                        <!-- dataacq -->
+                        <div class="PLAYBACK">
+                            <div class="PLAYBACK-TEXT">PLAYBACK</div>
+                        </div>
+                        <!-- playback -->
+            </div>
+            <!-- //SIDEBAR -->
+
+            <div class="MAIN">
+
+                  <div class = container>
+                    <div class="containerbox">
+                      <canvas id = "myChart" ></canvas>
+                    </div>
+                    <!-- containerbox -->
+                  </div>
+                  <!-- container -->
+
+                      <!--  -->
+
+                <script>
+
+                                      
+
+                    ChartIt();
+                    async function ChartIt(){
+                      const csvdata = await getData();
+                      const releasedata = await getReleaseData(csvdata);
+
+
+                      const ctx = document.getElementById('myChart').getContext('2d');
+
+
+
+                      //custom tooltip block
+                      const getOrCreateTooltip = (chart) =>{
+                        let tooltipEL = chart.canvas.parentNode.querySelector('div');
+                        if(!tooltipEL){
+                            tooltipEL = document.createElement('DIV');
+                            tooltipEL.classList.add('tooltipDesign');
+                            tooltipUL = document.createElement('UL');
+                            tooltipUL.classList.add('tooltipUL');
+
+                            //append to parent
+                            tooltipEL.appendChild(tooltipUL);
+                            chart.canvas.parentNode.appendChild(tooltipEL);
+                            
+
+                            // <canvas>
+                            //     <div class = "tootipclass">
+                            //         <ul class = "abc">
+                            //             </ul>
+                            //     </div>
+                            // </canvas>
+                        }
+                        return tooltipEL;
+                      };
+                        //trigger
+                        const externalTooltipHandler =(context) =>{
+                            const {chart, tooltip} = context;
+                            const tooltipEL = getOrCreateTooltip(chart);
+
+                            //hide
+                            if(tooltip.opacity === 0){
+                                tooltipEL.style.opacity = 0;
+                                return;
+                            };
+
+                            //tooltip text
+                            if(tooltip.body){
+                                const titleLines = tooltip.title || [];
+                                const bodyLines = tooltip.body.map (b => b.lines);
+                                const tooltipLI = document.createElement('LI');
+
+                                //title loop
+                                titleLines.forEach(title =>{
+                                    tooltipUL.appendChild(tooltipLI)
+                                    //create span
+                                    const tooltipSPAN = document.createElement('SPAN');
+                                    tooltipLI.appendChild(tooltipSPAN);
+                                    //create a text node with title
+                                    const tooltipTitle = document.createTextNode(title);
+                                    tooltipSPAN.appendChild(tooltipTitle);
+                                });
+
+                                const tooltipBodyP = document.createElement('P');
+                                bodyLines.forEach(body =>{
+                                    const textLabel = document.createTextNode(body);
+                                    tooltipBodyP.appendChild(textLabel);
+
+                                });
+
+                                const ULnode = tooltipEL.querySelector('ul');
+
+                                //remove old children
+                                while (ULnode.firstChild){
+                                    ULnode.firstChild.remove();
+                                }
+
+                                //add new children
+                                ULnode.appendChild(tooltipLI);
+                                tooltipLI.appendChild(tooltipBodyP);
+                                tooltipEL.style.opacity = 1;
+
+                                //positioning of the tooltip.
+                                const {offsetLeft: positionX, offsetTop: positionY} = chart.canvas;
+                                tooltipEL.style.left = positionX + tooltip.caretX + 'px';
+                                tooltipEL.style.top = positionY + tooltip.caretY + 20 + 'px';
+
+                            };
+
+                        };
+
+
+
+
+
+                        const moveChart ={
+                          id: 'moveChart',
+
+                          beforeDatasetsDraw: (chart, args, plugins) => {
+                            
+                            if (releasedata != -1){
+                            
+                              const{ctx, chartArea: {left, right, top, bottom, width, height}, scales: {x}} = chart;
+                              //     const { ctx, chartArea: {top, bottom,height}, scales: {x}} = chart;
+                                ctx.save();
+                                  
+                              
+                                ctx.beginPath();
+                                ctx.fillStyle = 'rgb(135, 0, 32, 0.6)';
+                                ctx.rect(x.getPixelForValue(releasedata)-6,top - 5, 12, height+10)
+                                ctx.fill();
+
+                                const angle = Math.PI / 180;
+                                ctx.translate(x.getPixelForValue(releasedata)+1, height/2+180);
+                                ctx.rotate(270 * angle);
+                                ctx.font = 'bold 12px sans-serif';
+                                ctx.textAlign = 'center';
+                                ctx.fillStyle ='white';
+                                ctx.fillText(' SENSORS DEPLOYED', 0, 0)
+                                ctx.restore();
+                              }
+                          },
+
+                          afterEvent(chart, args){
+                            const{ctx, canvas, chartArea: {left, right, top, bottom, width, height}} = chart;
+                            canvas.addEventListener('mousemove',(event) =>{
+                              const x = args.event.x;
+                              const y = args.event.y;
+
+                              if(x >= left - 65 && x <= left - 35 && y <= height / 2 + top + 15 && y >= height / 2 + top - 15){
+                                canvas.style.cursor = 'pointer';
+                              }
+                              else if(x >= right + 10 && x <= right + 40 && y <= height / 2 + top + 15 && y >= height / 2 + top - 15){
+                                canvas.style.cursor = 'pointer';
+                              }
+
+
+                              else if (x >=left + 45 && x <= left + 75 && y <= top + 15 && y >= top - 15){
+                                canvas.style.cursor = 'pointer';
+                              }
+                              else if (x >=left + 10 && x <= left + 40 && y <= top + 15 && y >= top - 15){
+                                canvas.style.cursor = 'pointer';
+                              }
+
+
+                              else{
+                                canvas.style.cursor = 'default';
+                              }
+
+
+                            })
+                          },
+
+                          afterDraw(chart, args, pluginOptions){
+                            const{ctx, chartArea: {left, right, top, bottom, width, height}, scales: {x}} = chart;
+                            //     const { ctx, chartArea: {top, bottom,height}, scales: {x}} = chart;
+                            
+
+                            class CircleChevron {
+                            //    constructor(x1,y1){
+
+                            //    }
+                              draw(ctx, x1, y1, pixel) {
+
+                                 //circle
+                                 const angle = Math.PI/180;
+                                 ctx.beginPath();
+                                 ctx.lineWidth = 5;
+                                 ctx.strokeStyle = 'rgb(0, 119, 138)';
+                                 ctx.fillStyle = 'lightgrey';
+                                 ctx.arc(x1, (height / 2) + top, 15 , angle * 0, angle * 360, false )
+                                 ctx.stroke();
+                                 ctx.fill();
+                                 ctx.closePath();
+
+                                 //arrow
+                                 ctx.beginPath();
+                                 ctx.lineWidth = 3;
+                                 ctx.strokeStyle = 'rgb(0, 119, 138)';
+                                 ctx.moveTo(x1 + pixel, height / 2 +top - 7.5);
+                                 ctx.lineTo(x1 - pixel, height / 2 + top);
+                                 ctx.lineTo(x1 + pixel, height / 2 + top + 7.5);
+                                 ctx.stroke();
+                                 ctx.closePath();
+
+                               }
+                             }
+
+                            let drawCircleLeft = new CircleChevron();
+                            drawCircleLeft.draw(ctx, left-50, 1, 5);
+
+
+                            let drawCircleRight = new CircleChevron();
+                            drawCircleLeft.draw(ctx, right+25, 1, -5);
+
+                            //scrollbar
+                            ctx.beginPath();
+                            ctx.fillStyle = 'lightgrey';
+                            ctx.rect(left,bottom + 71, width, 8);
+                            ctx.fill();
+                            ctx.closePath();
+
+                            //scroll
+                            const min = chart.options.scales.x.min;
+                             let startingPoint = left + (width / csvdata.ys.length)* min
+                             const barWidth = (width / csvdata.ys.length)* 30;
+
+                             ctx.beginPath();
+                             ctx.fillStyle = 'rgb(0, 119, 138)';
+                             ctx.rect(startingPoint,bottom + 65, barWidth, 20)
+                             ctx.fill();
+                             ctx.closePath();
+
+
+                             //zoombox
+                             ctx.beginPath();
+                             ctx.fillStyle = 'lightgrey';
+                             ctx.rect(left + 10,top - 15, 30, 30);
+                             ctx.fill();
+                             ctx.closePath();
+                            
+                            //-sign
+                            ctx.beginPath();
+                             ctx.fillStyle = 'rgb(0, 119, 138)';
+                             ctx.rect(left + 15,top-3, 20, 6);
+                             ctx.fill();
+                             ctx.closePath();
+
+                            
+                            //zoombox
+                             ctx.beginPath();
+                             ctx.fillStyle = 'lightgrey';
+                             ctx.rect(left + 45,top - 15, 30, 30);
+                             ctx.fill();
+                             ctx.closePath();
+
+                             //+sign
+                             ctx.beginPath();
+                             ctx.fillStyle = 'rgb(0, 119, 138)';
+                             ctx.rect(left + 50,top-3, 20, 6);
+                             ctx.rect(left + 57, top-10, 6, 20);
+                             ctx.fill();
+                             ctx.closePath();
+
+
+                             
+
+                          }
+                        }
+
+
+
+                        const config = {
+                            type: 'line',
+                            data: {
+                              labels: csvdata.xs,
+                              datasets: [{
+                                label: 'Altitude',
+                                data: csvdata.ys,
+                                borderWidth: 1,
+                                pointHoverRadius: 15,
+                                pointHoverBackgroundColor: 'rgba(10, 192, 192, 0.8)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                fill: true,
+                                tension: 0.2
+                              }]
+                            },
+                            options: {
+                                plugins: {
+                                    tooltip: {
+                                        enabled: false,
+                                        callbacks: {
+                                          beforeTitle: function(context){
+
+                                            return 'Time:  ';
+                                          },
+                                          afterFooter: function(chart){
+                                            const HOVER_TIME_VALUE = document.getElementById('HOVER_TIME_VALUE');
+                                            HOVER_TIME_VALUE.innerText = `${chart[0].label}`;
+
+                                            const HOVER_ALTITUDE_VALUE = document.getElementById('HOVER_ALTITUDE_VALUE');
+                                            HOVER_ALTITUDE_VALUE.innerText = `${chart[0].parsed.y} ft`;
+
+                                            const HOVER_STATUS_VALUE = document.getElementById('HOVER_STATUS_VALUE');
+
+                                            if (csvdata.padaStatus[chart[0].dataIndex].trim() === 'ARMED'){
+                                               
+                                               document.getElementById('PADA_STATUS_IMAGE').src = "{{ url_for('serve_static', filename='PADA_BUTTON_ARMED.png') }}";
+                                            }
+                                            else if(csvdata.padaStatus[chart[0].dataIndex].trim() === 'DEPLOYED'){
+                                              
+                                               document.getElementById('PADA_STATUS_IMAGE').src = "{{ url_for('serve_static', filename='PADA_BUTTON_DEPLOYED.png') }}";
+                                            }
+                                            else{
+                                               
+                                               document.getElementById('PADA_STATUS_IMAGE').src = "{{ url_for('serve_static', filename='PADA_BUTTON_DEFAULT.png') }}";
+                                            }
+
+                                            HOVER_STATUS_VALUE.innerText = `${csvdata.padaStatus[chart[0].dataIndex]}`;
+                                            
+
+                                          }
+                                        },
+                                        external: externalTooltipHandler
+                                    },
+                                },
+
+                                onHover: function(ctx){
+                                  if (ctx.chart._active[0] === undefined){
+                                    HOVER_TIME_VALUE.innerText = '--:--:--'
+                                    HOVER_ALTITUDE_VALUE.innerText = '-- ft'
+                                    HOVER_STATUS_VALUE.innerText = '-'
+                                    document.getElementById('PADA_STATUS_IMAGE').src = "{{ url_for('serve_static', filename='PADA_BUTTON_DEFAULT.png') }}";
+                                  }
+                                },
+
+                                layout:{
+                                  padding: {
+                                    top: 15,
+                                    right: 50,
+                                    left: 50,
+                                    bottom: 40
+                                  }
+                                },
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        //type: 'realtime',
+                                        min: 0,
+                                        max: 30,
+                                        ticks: {
+                                            color: "white",
+                                            minRotation: 45
+                                        },
+                                        grid: {
+                                          //color: 'rgba(176, 176, 176, 0.5)'
+                                          color: 'rgba(176, 176, 176, 0.7)'
+                                        },
+                                        border: {
+                                          dash: [15, 2]
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: {
+                                          //color: 'rgba(176, 176, 176, 0.5)'
+                                          color: 'rgba(176, 176, 176, 0.7)'
+                                        },
+                                        ticks:{
+                                          color: "white",
+                                        },
+                                        border: {
+                                          dash: [15 ,2]
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: [moveChart]
+                        };
+
+                        const myChart = new Chart(ctx, config);
+
+
+                      function moveScroll(){
+                        const{ctx, canvas, chartArea: {left, right, top, bottom, width, height}} = myChart;
+                        canvas.addEventListener('click', (event) => {
+                          const span_diff = myChart.options.scales.x.max-myChart.options.scales.x.min;
+                          const rect = canvas.getBoundingClientRect();
+                          const x = event.clientX - rect.left;
+                          const y = event.clientY - rect.top;
+
+
+                          if(x >= left - 65 && x <= left - 35 && y <= height / 2 + top + 15 && y >= height / 2 + top - 15){
+                                myChart.options.scales.x.min = myChart.options.scales.x.min - 10;
+                                myChart.options.scales.x.max = myChart.options.scales.x.max - 10;
+                                if(myChart.options.scales.x.min <= 0){
+                                   myChart.options.scales.x.min = 0;
+                                   myChart.options.scales.x.max = span_diff;
+                                 }
+                          }
+
+
+
+                          if(x >= right + 10 && x <= right + 40 && y <= height / 2 + top + 15 && y >= height / 2 + top - 15){
+                                myChart.options.scales.x.min = myChart.options.scales.x.min + 10;
+                                myChart.options.scales.x.max = myChart.options.scales.x.max + 10;
+                                if(myChart.options.scales.x.max >= csvdata.ys.length){
+                                   myChart.options.scales.x.min = csvdata.ys.length - span_diff;
+                                   myChart.options.scales.x.max = csvdata.ys.length;
+                                 }
+                          }
+
+                          if (x >=left + 10 && x <= left + 40 && y <= top + 15 && y >= top - 15){
+                            if(myChart.options.scales.x.min >= csvdata.ys.length/2){
+                              myChart.options.scales.x.min = myChart.options.scales.x.min - 10;
+                            }
+                            else{
+                              myChart.options.scales.x.max = myChart.options.scales.x.max - 10;
+                            }
+
+                          }
+
+                          if (x >=left + 45 && x <= left + 75 && y <= top + 15 && y >= top - 15){
+                            if(myChart.options.scales.x.min >= csvdata.ys.length/2){
+                              myChart.options.scales.x.min = myChart.options.scales.x.min + 10;
+                            }
+                            else{
+                              myChart.options.scales.x.max = myChart.options.scales.x.max + 10;
+                            }
+
+                          }
+
+
+
+                          myChart.update();
+                        })
+
+                      }
+
+                      function scrollWheel(wheel,chart){
+                        const span_diff = myChart.options.scales.x.max-myChart.options.scales.x.min;
+
+                        //scroll down
+                        if(wheel.deltaY > 0){
+                          myChart.options.scales.x.min = myChart.options.scales.x.min - 10;
+                                myChart.options.scales.x.max = myChart.options.scales.x.max - 10;
+                                if(myChart.options.scales.x.min <= 0){
+                                   myChart.options.scales.x.min = 0;
+                                   myChart.options.scales.x.max = span_diff;
+                                 }
+                        }
+
+                        if(wheel.deltaY < 0){
+                          myChart.options.scales.x.min = myChart.options.scales.x.min + 10;
+                                myChart.options.scales.x.max = myChart.options.scales.x.max + 10;
+                                if(myChart.options.scales.x.max >= csvdata.ys.length){
+                                   myChart.options.scales.x.min = csvdata.ys.length - span_diff;
+                                   myChart.options.scales.x.max = csvdata.ys.length;
+                                 }
+                        }
+
+                        myChart.update();
+                      }
+
+                      myChart.ctx.onclick = moveScroll();
+
+                      myChart.canvas.addEventListener('wheel',(e) =>{
+                        scrollWheel(e,myChart)
+                      });
+
+                    
+
+                      };
+
+
+
+
+                      async function getData() {
+                          const xs = [];
+                          const ys = [];
+                          const padaStatus =[];
+
+                          const csvDataUrl = "{{ url_for('serve_static', filename='flight_data_copy.csv') }}";
+
+                          const response = await fetch(csvDataUrl);
+                          const data = await response.text();
+
+
+                          const table = data.split('\n').slice(1);
+                          table.forEach(row => {
+                              const columns = row.split(',');
+
+                              const time = columns[0];
+                              xs.push(time);
+
+                              const alti = columns[1];
+                              ys.push(parseFloat(alti));
+                              
+                              const Status = columns[2];
+                              padaStatus.push(Status);
+                          });
+                          return { xs, ys, padaStatus};
+                      };
+
+                      async function getReleaseData(csvdata){
+                        const indexOfDeployed = csvdata.padaStatus.findIndex(status => status.trim() === 'DEPLOYED');
+                          if (indexOfDeployed !== -1) {
+                             RELEASE_TIME_VALUE.innerText = `${csvdata.xs[indexOfDeployed]}`;
+                             RELEASE_ALTITUDE_VALUE.innerText = `${csvdata.ys[indexOfDeployed]}`;
+                             return indexOfDeployed;
+                          }
+
+                          else{
+                            return -1;
+                          }
+                      };
+
+                  function updateCSV(){
+                    route_used = localStorage.getItem('route_name')
+                    $.get(route_used, function (data) {});
+                  }
+
+                  setInterval(updateCSV, 1000);
+                </script>
+
+                  <div class="BOTROW"> 
+
+                    <div class = "PLAY_BUTTON">
+
+                      <div id = staticplay class = PAUSE onclick="window.location.href = 'playback_live';">
+                        <!-- <div class = PLAY> -->
+                          <div class = PLAY_BUTTON_TITLE>PLAY</div>
+                          <div class = PLAY_BUTTON_DESC>LIVE DATA</div>
+                        <!-- </div> -->
+                          </div>
+                      <div id = staticpause class = PLAY onclick="window.location.href = 'playback_live';">
+                        <!-- <div class = PAUSE> -->
+                          <div class = PLAY_BUTTON_TITLE>PAUSE</div>
+                          <div class = PLAY_BUTTON_DESC>STORED DATA</div>
+                        <!-- </div> -->
+                          </div>
+                      
+
+                    </div>
+
+
+                    <div class = "HOVER_DATA">
+                      <div id = "HOVER_TIME" class = "HOVER">
+                        <div id = HOVER_TIME_TEXT class = "HOVER_TITLE">TIME:</div>
+                        <div id = HOVER_TIME_VALUE class = "HOVER_VALUE">--:--:--</div>
+                      </div>
+                      <div id = "HOVER_ALTITUDE" class = "HOVER">
+                        <div id = HOVER_ALTITUDE_TEXT class = "HOVER_TITLE">ALTITUDE:</div>
+                        <div id = HOVER_ALTITUDE_VALUE class = "HOVER_VALUE">-- ft</div>
+                      </div>
+                      <div id = "HOVER_STATUS" class = "HOVER">
+                        <div id = HOVER_STATUS_TEXT class = "HOVER_TITLE">PADA STATUS:</div>
+                        <div id = HOVER_STATUS_VALUE class = "HOVER_VALUE">-</div>
+                      </div>
+                      <div id = "STATUS_IMG" class = "HOVER_IMAGE">
+                        <img id="PADA_STATUS_IMAGE" src="{{ url_for('serve_static', filename='PADA_BUTTON_DEFAULT.png') }}"; alt="PADA" style="width: 100%; height: 100%;">
+                      </div>
+                    </div>
+
+                    <div class="RELEASE_DATA">
+
+                      <div class = "RELEASE_TIME">
+                        <div id = RELEASE_TIME_TEXT class = "HOVER_TITLE">RELEASE <br> TIME:</div>
+                        <div id = RELEASE_TIME_VALUE class = "RELEASE_VALUE">--:--:--</div>
+                      </div>
+                      
+                      <div class = "RELEASE_ALTITUDE">
+                        <div id = RELEASE_ALTITUDE_TEXT class = "HOVER_TITLE">RELEASE ALTITUDE:</div>
+                        <div id = RELEASE_ALTITUDE_VALUE class = "RELEASE_VALUE">-- ft</div>
+                      </div>
+                    </div>
+
+                  </div>
+
+            </div>
+            <!-- //main -->
+
+    </div>
+    <!-- //window -->
+  </body>
+  </html>
