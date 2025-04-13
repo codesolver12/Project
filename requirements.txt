@@ -1,0 +1,46 @@
+# requirements.txt
+setuptools==68.2.2
+wheel==0.42.0
+python-dotenv==1.0.0  # For environment variables
+# Web Frameworks
+Django==5.0.3
+Flask==3.0.2
+FastAPI==0.109.0
+
+# Database/ORM
+SQLAlchemy==2.0.25
+psycopg2-binary==2.9.9  # PostgreSQL adapter
+requests==2.31.0  # HTTP client
+numpy==1.26.3
+pandas==2.1.4
+matplotlib==3.8.2
+seaborn==0.13.0
+scipy==1.11.4
+scikit-learn==1.3.2
+tensorflow==2.15.0
+torch==2.1.1
+transformers==4.36.2  # Hugging Face models
+langchain==0.0.349  # LLM workflows
+openai==0.28.1  # ChatGPT API
+gunicorn==21.2.0  # WSGI server
+uvicorn==0.24.0  # ASGI server
+docker==6.1.3  # Containerization
+boto3==1.28.65  # AWS SDK
+pytest==7.4.3
+coverage==7.3.2
+flake8==6.1.0  # Linter
+black==23.11.0  # Code formatter
+Django==5.0.3
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+psycopg2-binary==2.9.9
+gunicorn==21.2.0
+numpy==1.26.3
+pandas==2.1.4
+scikit-learn==1.3.2
+jupyter==1.0.0
+matplotlib==3.8.2
+Flask==3.0.2
+Jinja2==3.1.2  # Template engine
+Werkzeug==3.0.1  # WSGI utility
+python-dotenv==1.0.0  # Environment variables
