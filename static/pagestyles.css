@@ -1,0 +1,617 @@
+.window {
+    box-sizing: border-box;
+    background-color: #11353F;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    display: flex;
+    flex-direction: row;
+}
+
+  .window .SIDEBAR {
+    box-sizing: border-box;
+    background-color: #42527A;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 3%;
+    height:100%;
+    position: relative;
+  }
+
+  .window .DATA-ACQ {
+    position: relative;
+    height: 34%;
+    background-color: #1B2338;
+    border-radius: 0px 0px 0px 15px;
+   
+  }
+
+  .window .DATA-ACQ-TEXT {
+    position: absolute;
+    width: 512px;
+    height: 78px;
+    top: 80px;
+    left: -205px;
+    transform: rotate(-90deg);
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: #b0b0b0;
+    font-size: 22px;
+    text-align: center;
+    justify-content: center;
+    letter-spacing: 0;
+    line-height: normal;
+  }
+
+  .window .PLAYBACK {
+    position: relative;
+    height: 34%;
+    background-color: #42527A;
+    border-radius: 0px 15px 0px 0px;
+    cursor: pointer;
+  }
+  .window .PLAYBACK-TEXT {
+    position: absolute;
+    width: 512px;
+    height: 78px;
+    top: 90px;
+    left: -205px;
+    transform: rotate(-90deg);
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: #b8b8b8;
+    font-size: 22px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+  }
+
+  .window .SIDE-LOGO {
+    position: relative;
+    height: 32%;
+    padding-left: 7px;
+    background-color: black;
+    border-radius: 0px 15px 0px 0px;
+    cursor: pointer;
+  }
+
+  
+  
+.window .MAIN {
+    box-sizing: border-box;
+    background-color: #1B2338;
+    width: 97%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .window .TOPROW {
+    background-color: #1B2338;
+    position: relative;
+    padding: 10px;
+    width: 100%;
+    height: 25%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .window .PAPLOT{
+    background-color: #262F46;
+    position: relative;
+    width: 40%;
+    height: 100%;
+    margin-right: 10px;
+    border-radius: 5px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .window .DISPLAY_DATA{
+    /* background-color: #262F46; */
+    position: relative;
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-right: 10px;
+    /* border-radius: 5px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30); */
+    justify-content: center;
+    overflow: hidden;
+  }
+  .window .LIVE_DATA_DISPLAY{
+    background-color: #262F46;
+    position: relative;
+    width: 65%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-right: 10px;
+    border-radius: 5px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+    justify-content: center;
+    overflow: hidden;
+  }
+  .window .LIVE_PLOT{
+    background-color: #262F46;
+    position: relative;
+    width: 65%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    /* margin-right: 10px; */
+    justify-content: center;
+    overflow: hidden;
+  }
+  .window .LIVE_DATA{
+    background-color: #262F46;
+    padding-top: 5px;
+    position: relative;
+    width: 35%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+
+  }
+  .window .PADA_STATUS_DISPLAY{
+    background-color: #262F46;
+    position: relative;
+    width: 15%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+    border-radius: 5px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .window .PADA_IMAGE{
+    box-sizing: border-box;
+    position: relative;
+    padding: 10px;
+    width: 100%;
+    height: 80%;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .window .PADA_STATUS{
+    position: relative;
+    width: 100%;
+    height: 20%;
+    padding-top: 5px;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: white;
+    font-size: 25px;
+  }
+  .window .RELEASE_DATA_DISPLAY{
+    background-color: lightgrey;
+    position: relative;
+    width: 20%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+    justify-content: center;
+    overflow: hidden;
+  }
+  .window .RELEASE_DATA_BOX{
+    background-color: #00778a;
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    height: 80%;
+    border-radius: 5px 5px 10px 10px;
+    justify-content: center;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .window .RELEASE_ALTITUDE{
+
+    box-sizing: border-box;
+    position: relative;
+    padding: 10px;
+    padding-top: 20px;
+    width: 100%;
+    height: 50%;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: white;
+    font-size: 48px;
+
+  }
+  .window .RELEASE_TIME{
+    box-sizing: border-box;
+    position: relative;
+    padding: 10px;
+    width: 100%;
+    height: 26%;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: white;
+    font-size: 20px;
+
+  }
+  .window .RELEASE_TITLE_BOX{
+    background-color: lightgrey;
+    box-sizing: border-box;
+    position: relative;
+    padding-top: 5px;
+    width: 100%;
+    height: 20%;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    font-family: "Inter", Helvetica;
+    font-weight: 800;
+    color: black;
+    font-size: 20px;
+  }
+
+  .window .ZONE_WRAPPER{
+    background-color: #262F46;
+    position: relative;
+    width: 30%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-right: 17px;
+    border-radius: 5px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+    justify-content: center;
+    overflow: hidden;
+  }
+
+
+  .window .ZONE_POPUP{
+    background-color: #262F46;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-right: 17px;
+    border-radius: 5px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+    justify-content: center;
+    overflow: hidden;
+    visibility: hidden;
+  }
+
+  .POPUP_TITLE{
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: white;
+    font-size: 17px;
+    padding-left: 5px;
+    padding-top: 7px;
+    text-align: center;
+    margin-right: 5px;
+    margin-bottom: 8px;
+  }
+ .OPEN_ZONE_POPUP{
+    visibility: visible;
+  }
+
+  .INPUT_ROW{
+    margin: 3px;
+    width: 100%;
+    height: 15%;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .POPUP_BUTTON_WRAPPER{
+    height: 15%;
+    padding: 10px;
+    display: flex;
+    margin: 5px;
+    flex-direction: row;
+    justify-content: center;
+    
+  }
+
+  .POPUP_CLOSE{
+    height: 100%;
+    box-sizing: border-box;
+    background-color: #ab0000;
+    width: 50%;
+    border-radius: 15px;
+    margin-right: 8px;font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: white;
+    font-size: 12px;
+
+  }
+  .POPUP_SUBMIT{
+    height: 100%;
+    box-sizing: border-box;
+    background-color: #00778a;
+    width: 50%;
+    border-radius: 15px;
+    margin-left: 8px;font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: white;
+    font-size: 12px;
+  }
+  .INPUT_TITLE{
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: white;
+    font-size: 15px;
+    padding-left: 5px;
+    text-align: right;
+    width: 25%;
+    padding-top: 5px;
+    margin-right: 5px;
+  }
+  .ZONE_ROW{
+    width: 100%;
+    height: 25%;
+    margin: 5px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .ZONE_COLOUR{
+    width: 8%;
+    height: 100%;
+    background-color: lightgray;
+    margin-right: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .ZONE_NAME{
+    width: 22%;
+    height: 100%;
+    padding-top: 5px;
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: white;
+    font-size: 20px;
+  }
+  .ZONE_COORDINATE{
+    width: 70%;
+    height: 100%;
+    padding-top: 5px;
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: white;
+    font-size: 20px;
+  }
+
+  .window .ZONE-COLOUR{
+    box-sizing: border-box;
+    background-color: #262F46;
+    position: relative;
+    padding: 5px;
+    width: 10%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .window .ZONE-COLOUR-LIST{
+    background-color: blue;
+    position: relative;
+    width: 100%;
+    height: 25%;
+    margin-right: 2px;
+    margin-bottom: 4px;
+    margin-top: 5px;
+    border-radius: 30%;
+    justify-content: center;
+  }
+
+  .window .ZONE-NAME{
+    background-color: #262F46;
+    position: relative;
+    width: 35%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+  }
+  .window .ZONE-NAME-LIST{
+    background-color: #262F46;
+    position: relative;
+    width: 100%;
+    height: 25%;
+    margin: 2px;
+    padding-left: 5px;
+    justify-content: left;
+    overflow: hidden;
+  }
+  .window .pzone{
+    font-size: 15px;
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: #b0b0b0;
+  }
+
+  .window .ZONE-COORD{
+    background-color: #262F46;
+    position: relative;
+    width: 55%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .window .ZONE-COORD-LIST{
+    background-color: #262F46;
+    position: relative;
+    width: 100%;
+    height: 25%;
+    margin: 2px;
+    justify-content: center;
+  }
+
+.window .WAYPOINT{
+    background-color: #262F46;
+    position: relative;
+    width: 30%;
+    height: 100%;
+    margin-right: 17px;
+    border-radius: 5px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+    justify-content: center;
+}
+
+.window .BOTROW {
+    background-color: #1B2338;
+    position: relative;
+    padding: 10px;
+    padding-top: 0px;
+    width: 100%;
+    height: 75%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;    
+  }
+
+.window .FPV{
+    background-color: #262F46;
+    position: relative;
+    flex: 0 0 auto;
+    margin-right: 10px;
+    border-radius: 5px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+    justify-content: center;
+}
+
+.window .WAY_MAP_BOX_WRAPPER{
+    background-color: #262F46;
+    position: relative;
+    flex: 1;
+    margin-right: 17px;
+    border-radius: 5px;
+    box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.window .SENSOR_DATA_DISPLAY{
+  background-color: #262F46;
+  position: relative;
+  width:100%;
+  height: 8%;
+  margin-right: 17px;
+  border-radius: 5px;
+  box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+}
+.SENSOR_TITLE{
+
+  height: 100%;
+  padding: 10px;
+  font-size: 15px;
+  font-family: "Inter", Helvetica;
+  font-weight: 700;
+  color: white;
+}
+.SENSOR_VALUE{
+
+  height: 100%;
+  padding-top: 4px;
+  padding-left: 4px;
+  flex: 1;
+  font-size: 25px;
+  font-family: "Inter", Helvetica;
+  font-weight: 700;
+  color: white;
+}
+
+.window .WAY_MAP_BOX{
+  background-color: #262F46;
+  position: relative;
+  flex: 1;
+  border-radius: 5px;
+  box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.window .DATA_SECT{
+  background-color: green;
+    height: 60%;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.window.DATA_TEXT_FONT{
+    height: 50%;
+    font-size: 15px;
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: #b0b0b0;
+}
+
+.window.LIVE_TEXT{
+  font-size: 15px;
+  font-family: "Inter", Helvetica;
+  font-weight: 700;
+  color: #b0b0b0;
+}
+
+.window .TEST_BOX{
+  background-color: green;
+  height: 50%;
+  font-size: large;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.window .DATA_TITLE{
+  width: 100%;
+  height: 12%;
+  font-family: "Inter", Helvetica;
+  font-weight: 600;
+  color: white;
+  font-size: 20px;
+  text-align: center;
+  justify-content: center;
+}
+
+.POP_UP{
+  background-color: lightgrey;
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+}

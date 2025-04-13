@@ -1,0 +1,285 @@
+.window {
+    box-sizing: border-box;
+    background-color: #11353F;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    display: flex;
+    flex-direction: row;
+}
+
+  .window .SIDEBAR {
+    box-sizing: border-box;
+    background-color: #42527A;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 3%;
+    height:100%;
+    position: relative;
+  }
+
+  .window .DATA-ACQ {
+    position: relative;
+    height: 50%;
+    background-color: #42527A;
+    cursor: pointer;
+   
+  }
+
+  .window .DATA-ACQ-TEXT {
+    position: absolute;
+    width: 512px;
+    height: 78px;
+    top: 130px;
+    left: -210px;
+    transform: rotate(-90deg);
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: #494949;
+    font-size: 30px;
+    text-align: center;
+    justify-content: center;
+    letter-spacing: 0;
+    line-height: normal;
+  }
+
+  .window .PLAYBACK {
+    position: relative;
+    height: 50%;
+    background-color: #1B2338;
+    border-radius: 15px 0px 0px 0px;
+  }
+  .window .PLAYBACK-TEXT {
+    position: absolute;
+    width: 512px;
+    height: 78px;
+    top: 150px;
+    left: -210px;
+    transform: rotate(-90deg);
+    font-family: "Inter", Helvetica;
+    font-weight: 700;
+    color: #b0b0b0;
+    font-size: 30px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+  }
+
+  
+  
+.window .MAIN {
+    box-sizing: border-box;
+    background-color: #1B2338;
+    padding: 10px;
+    width: 97%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+
+
+.window .container{
+  background-color: #262F46;
+  position: relative;
+  height: 82%;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 5px;
+  box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+  
+}
+
+.window .containerbox{
+  height: 100%;
+}
+
+
+.tooltipDesign{
+  background: #262F46;
+  border-radius: 3px;
+  color: white;
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+  transform: translate(-50%, 0);
+  transition: all 0.1s ease;
+  padding: 10px;
+  border: white solid 2px;
+  }
+.tooltipUL{
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  text-transform: uppercase;
+  font-family: "Inter", Helvetica;
+  font-weight: 700;
+  color: white;
+  font-size: px;
+  text-align: center;
+  justify-content: center;
+}
+
+
+.window .BOTROW{
+  position: relative;
+  margin-top: 10px;
+  height: 18%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.window .PLAY_BUTTON{
+  background-color: #3e424b;
+  height: 100%;
+  width: 15%;
+  margin-right: 10px;
+  position: relative;
+  border-radius: 15px;
+  box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.window .PLAY{
+  background-color: #007788;
+  border-radius: 15px;
+  padding-left: 5px;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+.window .PLAY_BUTTON_TITLE{
+  padding-top: 15px;
+  height: 55%;
+  font-family: "Inter", Helvetica;
+  font-weight: 700;
+  color: white;
+  font-size: 25px;
+  text-align: center;
+  justify-content: center;
+}
+.window .PLAY_BUTTON_DESC{
+  padding-top: 15px;
+  height: 45%;
+  font-family: "Inter", Helvetica;
+  font-weight: 700;
+  color: rgb(224, 223, 223);
+  font-size: 10px;
+  text-align: center;
+  justify-content: center;
+}
+.window .PAUSE{
+  background-color: #3e424b;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  
+}
+
+.window .HOVER_DATA{
+  height: 100%;
+  width: 55%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.window .HOVER{
+  height: 100%;
+  width: 29%;
+  margin-right: 10px;
+  background-color: #262F46;
+  position: relative;
+  border-radius: 5px;
+  box-shadow: -4px 4px 10px 0px rgba(0, 0, 0, 0.30);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.window .HOVER_TITLE{
+  padding-top: 15px;
+  height: 50%;
+  font-family: "Inter", Helvetica;
+  font-weight: 700;
+  color: white;
+  font-size: 25px;
+  text-align: center;
+  justify-content: center;
+}
+
+.window .HOVER_VALUE{
+  height: 50%;
+  font-family: "Inter", Helvetica;
+  font-weight: 700;
+  color: #007788;
+  font-size: 35px;
+  text-align: center;
+  justify-content: center;
+}
+
+.window .HOVER_IMAGE{
+  height: 100%;
+  aspect-ratio: 1;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+
+.window .RELEASE_DATA{
+  height: 100%;
+  width: 30%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.window .RELEASE_TIME{
+  width: 50%;
+  padding: 10px;
+  padding-top: 0px;
+  margin-right: 10px;
+  background-color: #00778a;
+  position: relative;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.window .RELEASE_ALTITUDE{
+  width: 50%;
+  padding: 10px;
+  padding-top: 0px;
+  background-color: rgb(0, 119, 138);
+  position: relative;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.window .RELEASE_VALUE{
+  height: 50%;
+  font-family: "Inter", Helvetica;
+  font-weight: 700;
+  color: #b8bbbb;
+  font-size: 30px;
+  text-align: center;
+  justify-content: center;
+}
+
+

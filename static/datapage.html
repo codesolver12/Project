@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    
+
+    <title>AIRCRAFT HEALTH MONITORING AND PREDICTIVE MAINTAINANCE WITH AUTOMATED TRAFFIC CONTROL GUI</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0/dist/chartjs-plugin-streaming.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script src="{{ url_for('static', filename='ZoneDisplay.js') }}" ></script>
+    <script src="{{ url_for('static', filename='ReleaseData.js') }}" ></script>
+    <script src="{{ url_for('static', filename='DataPageChart.js') }}" ></script>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pagestyles.css') }}">
+
+    <style>
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+                <div class="window">
+
+                    <div class="SIDEBAR">
+                        <div class="DATA-ACQ">
+                            <div class="DATA-ACQ-TEXT">DATA ACQUISITION</div>
+                        </div>
+                        <!-- Sidebar Data Acquistion button -->
+
+                        <div class="PLAYBACK" onclick="window.location.href = 'playback_live';">
+                            <div class="PLAYBACK-TEXT">PLAYBACK</div>
+                        </div>
+                        <!-- Sidebar Playback button-->
+                    </div>  
+                    <!-- SIDEBAR -->                  
+                    
+                    
+                    
+                    <div class="MAIN">
+
+                        
+
+                                    <div class="TOPROW">
+                                            <div class = "DISPLAY_DATA">
+                                                <div class = "LIVE_DATA_DISPLAY">
+                                                    <div class = "LIVE_PLOT">
+                                                        <canvas id="myChart"></canvas>
+                                                    </div>
+                                                    <div class = "LIVE_DATA">
+                                                        <div class="DATA_TITLE">ALTITUDE</div>
+                                                        <div id ="LIVE_ALTITUDE" class="RELEASE_ALTITUDE">-- ft.</div>
+                                                        <div class="DATA_TITLE">TIME</div>
+                                                        <div id ="LIVE_TIME" class="RELEASE_TIME">--:--:--</div>
+                                                    </div>
+                                                </div>
+                                                <!-- <form action="/button_status" method="post"> -->
+                                                    <div class = "PADA_STATUS_DISPLAY" onclick="deployPADA()">
+                                                        <!-- <input type="submit" name="button_pressed" value="true" > -->
+                                                        <div class = "PADA_IMAGE">
+                                                            
+                                                            <img id="PADA_STATUS_IMAGE" src="{{ url_for('serve_static', filename='PADA_BUTTON_DEFAULT.png') }}"; alt="PADA" style="width: 100%; height: 100%;">
+                                                        </div>
+                                                        <div id = "PADA_STATUS" class="PADA_STATUS">
+                                                            ARMED
+                                                        </div>
+                                                    </div>
+                                                <!-- </form> -->
+
+                                                <div class="RELEASE_DATA_DISPLAY">
+                                                    <div class = "RELEASE_DATA_BOX">
+                                                        <div id ="RELEASE_ALTITUDE" class="RELEASE_ALTITUDE">--.-- ft.</div>
+                                                        <div id ="RELEASE_TIME"class="RELEASE_TIME">--:--:--</div>
+                                                    </div>
+                                                    <div class = "RELEASE_TITLE_BOX"> Altimeter </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="ZONE_WRAPPER">
+                                                
+                                                <div class = ZONE_ROW>
+                                                    <div id="ZONE_COLOUR1" class="ZONE_COLOUR" onclick="PopUp_Open(0)"></div>
+                                                    <div id = "ZONE_NAME1" class="ZONE_NAME"> GND </div>
+                                                    <div id = "ZONE_COORDINATE1" class="ZONE_COORDINATE">- </div>
+                                                </div>
+
+                                                <div class = ZONE_ROW>
+                                                    <div id="ZONE_COLOUR2"class="ZONE_COLOUR" onclick="PopUp_Open(1)"></div>
+                                                    <div id = "ZONE_NAME2" class="ZONE_NAME"> ABN </div>
+                                                    <div id = "ZONE_COORDINATE2" class="ZONE_COORDINATE">- </div>
+                                                </div>
+
+                                                <div class = ZONE_ROW>
+                                                    <div id="ZONE_COLOUR3"class="ZONE_COLOUR" onclick="PopUp_Open(2)"></div>
+                                                    <div id = "ZONE_NAME3" class="ZONE_NAME"> MAINT  </div>
+                                                    <div id = "ZONE_COORDINATE3" class="ZONE_COORDINATE">- </div>
+                                                </div>
+
+                                                <div class = ZONE_ROW>
+                                                    <div id="ZONE_COLOUR4"class="ZONE_COLOUR" onclick="PopUp_Open(3)"></div>
+                                                    <div id = "ZONE_NAME4" class="ZONE_NAME"> A/G INFO </div>
+                                                    <div id = "ZONE_COORDINATE4" class="ZONE_COORDINATE">- </div>
+                                                </div>
+
+                                                <div class="ZONE_POPUP" id = "ZONE_POPUP">
+                                                    <div class="POPUP_TITLE">INPUT ZONE COORDINATES AND ZONE COLOUR:</div>
+
+                                                    <form id="LATTITUDE_INPUT" class="INPUT_ROW">
+                                                        <div class="INPUT_TITLE">
+                                                            <label for = "LATTITUDE">LATTITUDE:</label>
+                                                        </div>
+                                                        <input type="text" id ="LATTITUDE" name="LATTITUDE" placeholder=" --" required>
+                                                    </form>
+                                                    <form id="LONGITUDE_INPUT" class="INPUT_ROW"> 
+                                                        <div class="INPUT_TITLE">
+                                                        <label for = "LONGITUDE">LONGITUDE:</label>
+                                                        </div>
+                                                        <input type="text" id ="LONGITUDE" name="LONGITUDE" placeholder=" --" required>
+                                                    </form>
+                                                    <form id="COLOUR_INPUT" class="INPUT_ROW">
+                                                        <div class="INPUT_TITLE">
+                                                        <label for = "COLOUR_CODE">COLOUR:</label>
+                                                        </div>
+                                                        <input type="text" id ="COLOUR_CODE" name="COLOUR_CODE" placeholder=" --" required>
+                                                    </form>
+                                                    <div class="POPUP_BUTTON_WRAPPER">
+                                                        <button class ="POPUP_CLOSE" onclick="PopUp_Close()">CLOSE</button>
+                                                        <button class ="POPUP_SUBMIT" type="submit" onclick="PopUp_Submit()">SUBMIT</button>                                                     
+                                                    </div>
+                                                </div> 
+                                            </div>
+                                            <!-- ZONE -->
+
+                                            
+
+                                    </div>
+                                    <!-- TOPROW -->
+
+                                    <div class="BOTROW">
+
+
+
+                                            <div class="FPV">
+
+                                                <video height=100% autoplay muted loop>
+                                                    <source src = {{ url_for('static', filename="static video.mp4") }} type="video/mp4">
+                                                </video>`
+
+                                                <!-- <img src="{{ url_for('video') }}" height="100%"/> -->
+
+                                            </div>
+                                            <!-- FPV -->
+
+                                            <div class="WAY_MAP_BOX_WRAPPER">
+                                                <div class="SENSOR_DATA_DISPLAY">
+                                                    <div class="SENSOR_TITLE">AIRSPEED</div>
+                                                    <div class="SENSOR_VALUE" id = "AIRSPEED_DISPLAY">--</div>
+                                                    <div class="SENSOR_TITLE">LATITUDE</div>
+                                                    <div class="SENSOR_VALUE" id = "LATITUDE_DISPLAY">--</div>
+                                                    <div class="SENSOR_TITLE">LONGITUDE</div>
+                                                    <div class="SENSOR_VALUE" id = "LONGITUDE_DISPLAY">--</div>
+
+                                                </div>
+
+                                                <div class="WAY_MAP_BOX">
+                                                            
+                                                            <div id = "map"></div> 
+                                                                <script>
+                                                                    let history = [];
+
+                                                                    var map = L.map('map')
+                                                                    // Initializes map
+                                                                    map.setView([11.650227, 76.166992], 18);
+                                                                    //========================================================================
+                                                                    //NEED TO SET TO START COORDINATES
+                                                                    //========================================================================
+
+                                                                    // Sets initial coordinates and zoom level
+
+                                                                    // Add a base layer (OpenStreetMap in this case)
+                                                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                                                    attribution: '© OpenStreetMap contributors'
+                                                                    }).addTo(map);
+
+                                                                   
+
+
+
+                                                                    var lineCoordinates = [
+                                                                    [11.650227, 76.166992],
+                                                                    [11.650227, 76.166992]  // Second coordinate
+                                                                    // Add more coordinates as needed
+                                                                     ];
+                                                                     //========================================================================
+                                                                    //NEED TO SET TO START COORDINATES
+                                                                    //========================================================================
+                                                                    // Create a polyline and add it to the map
+                                                                    var polyline = L.polyline(lineCoordinates, { color: 'red' }).addTo(map);   
+                                                                    
+                                                                    // Function to generate a random coordinate
+                                                                    function generateRandomCoordinate() {
+                                                                    var lat = 11.650227 - (Math.random() * 0.0005);
+                                                                    var lng = 76.166992 - (Math.random() * 0.0005);
+                                                                    return [lat, lng];
+                                                                    }
+
+                                                                    // Function to generate a random coordinate
+                                                                    // function generateRandomCoordinate() {
+                                                                    // var lat = 11.650227 - (Math.random() * 0.0005);
+                                                                    // var lng = 76.166992 - (Math.random() * 0.0005);
+                                                                    // return [lat, lng];
+                                                                    // }
+
+                                                                    // Function to add more random coordinates to the line
+                                                                    function addRandomCoordinates(GPS_Latitude,GPS_Longitude) {
+                                                                    //var randomCoordinate = generateRandomCoordinate();
+                                                                    var randomCoordinate = [GPS_Latitude,GPS_Longitude];
+                                                                    lineCoordinates.push(randomCoordinate);
+
+                                                                    // Update the polyline with the new coordinates
+                                                                    polyline.setLatLngs(lineCoordinates);
+
+                                                                    // Update the marker position
+                                                                    marker.setLatLng(randomCoordinate);
+                                                                    }
+
+                                                                    // Create a marker with a custom icon
+                                                                    var customIcon = L.icon({
+                                                                    iconUrl: '/static/PADA.png',
+                                                                    iconSize: [32, 32],
+                                                                    iconAnchor: [16, 16],
+                                                                    popupAnchor: [0, 0]
+                                                                    });
+
+                                                                    // Add a marker to the map with the custom icon
+                                                                    var marker = L.marker([11.650227, 76.166992], { icon: customIcon }).addTo(map);
+
+                                                                    // Add a scale control to the map (positioned at the bottom right)
+                                                                    L.control.scale({ position: "bottomright" }).addTo(map);
+
+                                                                    // Example: Call the function to add random coordinates every second
+                                                                       
+
+
+
+                                                                    // var customIcon = L.divIcon({
+                                                                    //     className: 'custom-marker',
+                                                                    //     html: '<div style="background-color: #00FF00; width: 24px; height: 24px; border-radius: 50%;"></div>',
+                                                                    //     iconSize: [24, 24], // Size of the icon
+                                                                    //     iconAnchor: [12, 12], // Point of the icon that corresponds to the marker's location
+                                                                    //     popupAnchor: [0, -12], // Point from which the popup should open relative to the iconAnchor
+                                                                    //     // Additional options as needed
+                                                                    //     });
+
+                                                                    // var zone1_marker = L.marker([11.650627, 76.166992]).addTo(map);
+                                                                    // //var zone1_marker = L.marker([11.650627, 76.166992], { icon: customIcon }).addTo(map);
+                                                                    // var map_popup1 = zone1_marker.bindPopup("ZONE 1:  "+zone1_marker.getLatLng())
+                                                                    // map_popup1.addTo(map)
+
+                                                                    // var zone2_marker = L.marker([11.650627, 76.167992]).addTo(map);
+                                                                    // var map_popup2 = zone2_marker.bindPopup("ZONE 2:  "+zone2_marker.getLatLng())
+                                                                    // map_popup2.addTo(map)
+
+                                                                    // var zone3_marker = L.marker([11.650227, 76.166992]).addTo(map);
+                                                                    // var map_popup3 = zone3_marker.bindPopup("ZONE 3:  "+zone3_marker.getLatLng())
+                                                                    // map_popup3.addTo(map)
+
+                                                                    // var zone4_marker = L.marker([11.650227, 76.167992]).addTo(map);
+                                                                    // var map_popup4 = zone4_marker.bindPopup("ZONE 4:  "+zone4_marker.getLatLng())
+                                                                    // map_popup4.addTo(map)
+                                                                    
+                                                                </script>
+
+                                                </div>
+                                                <!-- WAY_MAP_BOX -->
+                                            </div> 
+                                            <!-- WAY_MAP_BOX_WRAPPER -->
+                                    
+                                        </div>
+                                    <!-- BOTROW -->
+                                
+                                    <!-- <div class = "POP_UP">
+                                        INPUT GPS COORDINATES:
+                                    </div> -->
+                        </div> 
+                        <!-- //main -->
+
+                </div> 
+                <!-- //window -->
+
+
+
+
+    <script>
+            setZone()
+            CheckReleaseData();
+        const load_chart_data_str = localStorage.getItem('datapoints');
+        const load_chart_data = load_chart_data_str.split(',')
+
+        const data = {
+            datasets: [{
+                label: ' FLIGHT ALTITUDE',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: true,
+                tension: 0.2,
+                data: [{ x: Date.now() - 9000, y: load_chart_data [0] },
+                        { x: Date.now() - 8000, y: load_chart_data [1] },
+                        { x: Date.now() - 7000, y: load_chart_data [2] },
+                        { x: Date.now() - 6000, y: load_chart_data [3] },
+                        { x: Date.now() - 5000, y: load_chart_data [4] },
+                        { x: Date.now() - 4000, y: load_chart_data [5] },
+                        { x: Date.now() - 3000, y: load_chart_data [6] },
+                        { x: Date.now() - 2000, y: load_chart_data [7] },
+                        { x: Date.now() - 1000, y: load_chart_data [8] }
+                    ]  // Initialize with an empty array
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data,
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'realtime',
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, config);
+
+        function deployPADA(){
+            localStorage.setItem('route_name','/random_number_deployed');
+            updateChartData(true);
+        }
+
+        // function updateChartData(PADA_Click) {
+        //     route_used = localStorage.getItem('route_name')
+        //     $.get(route_used, function (data) {         // Data comes in from the python program here
+        //         const altitude_value = data.altitude;
+        //         const airspeed_value = data.airspeed;
+        //         const latitude_value = data.lat;
+        //         const longitude_value = data.lon;
+
+        //         console.log("ALTITUDE: "+ altitude_value)
+        //         console.log("AIRSPEED: "+airspeed_value)
+        //         console.log("LATITUDE: "+latitude_value)
+        //         console.log("LONGITUDE: "+longitude_value)
+
+        //         $('#LIVE_ALTITUDE').text(altitude_value+" ft.");
+        //         $('#AIRSPEED_DISPLAY').text(airspeed_value+" ft./s");
+        //         $('#LATITUDE_DISPLAY').text(latitude_value+" °N");
+        //         $('#LONGITUDE_DISPLAY').text(longitude_value+" °E");
+
+
+        //         load_chart_data.shift();
+        //         load_chart_data.push(altitude_value);
+        //         localStorage.setItem('datapoints',load_chart_data)
+        //         //console.log(localStorage.getItem('datapoints'))
+
+        //         addRandomCoordinates(latitude_value,longitude_value)
+
+
+        //         const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        //         const formatter = new Intl.DateTimeFormat('en-US', options);
+        //         const now = new Date();
+        //         let formattedTime;
+
+        //         if (now.getHours() === 0) {
+        //             const adjustedHours = '00';
+        //             const minutes = now.getMinutes().toString().padStart(2, '0');
+        //             const seconds = now.getSeconds().toString().padStart(2, '0');
+        //             formattedTime = `${adjustedHours}:${minutes}:${seconds}`;
+        //         }
+        //         else {
+        //             formattedTime = formatter.format(now);
+        //         }
+
+        //         $('#LIVE_TIME').text(formattedTime);
+
+        //         if (PADA_Click){
+
+        //         stored_release_time = formattedTime;
+        //         stored_release_alt = `${altitude_value} ft.`;
+        //         stored_release_status = 'DEPLOYED';
+
+        //         localStorage.setItem(time_key, stored_release_time);
+        //         localStorage.setItem(alt_key, stored_release_alt);
+        //         localStorage.setItem(status_key, stored_release_status);
+
+        //         updateReleaseData();
+        //         }
+
+        //         myChart.data.datasets[0].data.push({
+        //             x: Date.now(),
+        //             y: altitude_value
+        //         });
+        //         myChart.update();
+        //     });
+        // }
+
+        // Update chart every second
+        setInterval(updateChartData, 1000);
+        
+    </script>
+
+
+</body>
+</html>
