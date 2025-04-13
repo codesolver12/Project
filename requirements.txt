@@ -6,3 +6,9 @@ pyserial==3.5  # For Arduino
 python-dotenv==1.0.0
 scikit-learn==1.4.0  # Python 3.12 compatible
 tensorflow==2.16.1  # Python 3.12 compatible
+# requirements.txt
+streamlit==1.34.0
+opencv-python-headless==4.9.0.80
+numpy==1.26.3
+pandas==2.1.4
+python-dotenv==1.0.0
